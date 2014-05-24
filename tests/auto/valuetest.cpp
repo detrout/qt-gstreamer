@@ -36,6 +36,7 @@ private Q_SLOTS:
     void miniObjectTest();
     void capsTest();
     void valueTest();
+    void arrayTest();
     void interfaceTest();
     void conversionsTest();
     void copyTest();
@@ -88,6 +89,90 @@ void ValueTest::enumTest()
     QVERIFY(v.isValid());
     QCOMPARE(v.type(), QGlib::GetType<QGst::PadDirection>());
     QCOMPARE(v.get<QGst::PadDirection>(), QGst::PadSink);
+}
+
+// Start of a proxy class to wrap GValueArrays with something
+// that knows how to access elements & return them.
+class Array
+{
+public:
+    Array();
+    Array(QGlib::Value &value);
+
+    // I bet this should actually return a pointer.
+    // or we need a different way of setting array elements.
+    QGlib::Value operator[](int);
+
+protected:
+    GValueArray *data;
+};
+
+Array::Array() : data(0) {}
+
+Array::Array(QGlib::Value &value)
+{
+    data = static_cast<GValueArray *>(g_value_get_boxed(value));
+}
+
+QGlib::Value Array::operator[](int i)
+{
+    GValue *gv = g_value_array_get_nth(this->data, i);
+    return QGlib::Value(gv);
+}
+
+// Need to figure out
+// QGlib::GetTypeImpl< Array >::operator Type() { return G_TYPE_VALUE_ARRAY; }
+// struct ValueVTable_Array
+// {
+//     static void get(const QGlib::Value & value, void *data)
+//     {
+//     };
+//
+//     static void set(QGlib::Value & value, const void *data)
+//     {
+//     };
+// };
+
+// Create a GValueArray fill it with a few values
+// And try to figure out how to extract data from it.
+void ValueTest::arrayTest()
+{
+    // make a GValueArray with GObject calls
+    GValueArray *array = g_value_array_new(2);
+
+    GValue v0 = G_VALUE_INIT;
+    QGlib::Value v1(20.02);
+
+    g_value_init(&v0, G_TYPE_DOUBLE);
+    g_value_set_double(&v0, 10.01);
+
+    g_value_array_append(array, &v0);
+    g_value_array_append(array, v1);
+
+    GValue gvarray = G_VALUE_INIT;
+    g_value_init(&gvarray, G_TYPE_VALUE_ARRAY);
+    QVERIFY(G_VALUE_HOLDS(&gvarray, G_TYPE_VALUE_ARRAY));
+
+    g_value_set_boxed(&gvarray, array);
+    QVERIFY(G_VALUE_HOLDS(&gvarray, G_TYPE_VALUE_ARRAY));
+
+    QGlib::Value qvarray(&gvarray);
+    qDebug() << "qva " << qvarray;
+
+    // pulling an element  out manually
+    GValueArray *unboxed_array = static_cast<GValueArray *>(g_value_get_boxed(qvarray));
+
+    QGlib::Value qv1(g_value_array_get_nth(unboxed_array, 1));
+    QCOMPARE(qv1.get<double>(), 20.02);
+    //QVERIFY(G_VALUE_HOLDS(gv, G_TYPE_VALUE_ARRAY));
+
+    Array a1(qvarray);
+    QCOMPARE(a1[0].get<double>(), 10.01);
+
+//     QGlib::Value::registerValueVTable(QGlib::GetType<Fraction>(),
+//             QGlib::ValueVTable(ValueVTable_Fraction::set, ValueVTable_Fraction::get));
+
+
 }
 
 void ValueTest::flagsTest()
