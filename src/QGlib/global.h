@@ -40,6 +40,7 @@
 #endif
 
 typedef struct _GValue GValue;
+typedef struct _GValueArray GValueArray;
 typedef struct _GParamSpec GParamSpec;
 typedef struct _GClosure GClosure;
 typedef struct _GObject GObject;

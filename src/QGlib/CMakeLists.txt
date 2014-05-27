@@ -4,6 +4,7 @@ set(QtGLib_SRCS
     paramspec.cpp
     object.cpp
     value.cpp
+    valuearray.cpp
     signal.cpp
     error.cpp
     connect.cpp
@@ -22,6 +23,7 @@ set(QtGLib_INSTALLED_HEADERS
     paramspec.h   ParamSpec
     object.h      Object
     value.h       Value
+    valuearray.h  ValueArray
     qglib_signal.h Signal
     emitimpl.h
     connect.h     Connect
