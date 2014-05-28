@@ -22,24 +22,18 @@ ValueArray::ValueArray(GValueArray *value) :
 ValueArray::ValueArray(QList< QGlib::Value > &iterable )
 {
     garray = g_value_array_new(iterable.size());
-    if (garray) {
-        for(QGlib::Value v: iterable) {
-            garray = g_value_array_append(garray, v);
-        }
-    } else {
-        throw QString("Error allocating value array");
+    Q_ASSERT_X(garray, "g_value_array_new", "Unable to allocate array");
+    Q_FOREACH(QGlib::Value v, iterable) {
+        garray = g_value_array_append(garray, v);
     }
 }
 
 ValueArray::ValueArray(QVector< QGlib::Value > &iterable )
 {
     garray = g_value_array_new(iterable.size());
-    if (garray) {
-        for(QGlib::Value v: iterable) {
-            garray = g_value_array_append(garray, v);
-        }
-    } else {
-        throw QString("Error allocating value array");
+    Q_ASSERT_X(garray, "g_value_array_new", "Unable to allocate array");
+    Q_FOREACH(QGlib::Value v, iterable) {
+        garray = g_value_array_append(garray, v);
     }
 }
 
@@ -49,20 +43,15 @@ ValueArray::~ValueArray()
 
 void ValueArray::append( const QGlib::Value &value)
 {
-    if (garray) {
-        garray = g_value_array_append(garray, value);
-    } else {
-        throw QString("Accessing uninitialized value array");
-    }
+    Q_ASSERT_X(garray, "ValueArray::append", "Called with uninitialized array");
+
+    garray = g_value_array_append(garray, value);
 }
 
 const QGlib::Value ValueArray::at(int i) const
 {
-    if (garray) {
-        return QGlib::Value(g_value_array_get_nth(garray, i));
-    } else {
-        throw QString("Accessing uninitialized value array");
-    }
+    Q_ASSERT_X(garray, "ValueArray::at", "Called with uninitialized array");
+    return QGlib::Value(g_value_array_get_nth(garray, i));
 }
 
 const QGlib::Value ValueArray::back() const
@@ -80,12 +69,8 @@ void ValueArray::clear()
 
 void ValueArray::insert( int i, const QGlib::Value &value)
 {
-    if (garray) {
-        garray = g_value_array_insert(garray, i, value);
-    } else {
-        throw QString("Accessing uninitialized value array");
-    }
-
+    Q_ASSERT_X(garray, "ValueArray::insert", "Called with uninitialized array");
+    garray = g_value_array_insert(garray, i, value);
 }
 
 int ValueArray::length() const
@@ -95,11 +80,8 @@ int ValueArray::length() const
 
 void ValueArray::prepend(const QGlib::Value& value)
 {
-    if (garray) {
-        garray = g_value_array_prepend(garray, value);
-    } else {
-        throw QString("Accessing uninitialized value array");
-    }
+    Q_ASSERT_X(garray, "ValueArray::prepend", "Called with uninitialized array");
+    garray = g_value_array_prepend(garray, value);
 }
 
 void ValueArray::push_back(const QGlib::Value &value)
@@ -114,11 +96,9 @@ void ValueArray::push_front(const QGlib::Value &value)
 
 int ValueArray::removeAt(int i)
 {
-    if (garray) {
-        garray = g_value_array_remove(garray, i);
-    } else {
-        throw QString("Accessing uninitialized value array");
-    }
+    Q_ASSERT_X(garray, "ValueArray::removeAt", "Called with uninitialized array");
+
+    garray = g_value_array_remove(garray, i);
 }
 
 int ValueArray::size() const
@@ -137,12 +117,10 @@ const QGlib::Value ValueArray::operator[](int i) const
 
 void ValueArray::set(int i, QGlib::Value &source)
 {
-    if (garray) {
-        GValue *destination = g_value_array_get_nth(garray, i);
-        g_value_copy(static_cast<GValue *>(source), destination);
-    } else {
-        throw QString("Accessing uninitialized value array");
-    }
+    Q_ASSERT_X(garray, "ValueArray::set", "Called with uninitialized array");
+
+    GValue *destination = g_value_array_get_nth(garray, i);
+    g_value_copy(static_cast<GValue *>(source), destination);
 }
 
 QList< QGlib::Value > ValueArray::toList() const
@@ -202,20 +180,5 @@ ValueArray &ValueArray::operator=(GValueArray *array)
     garray = array;
     return *this;
 }
-
-// void ValueArray::setData(const QGlib::Value &value)
-// {
-//     GValueArray *array = static_cast<GValueArray *>(g_value_get_boxed(value));
-//     if (data) {
-//         delete data;
-//         data = new Data(array);
-//     }
-// }
-//
-// void *ValueArray::getData()
-// {
-//     return static_cast<void *>(data->garray);
-// }
-
 
 } //namespace QGlib
