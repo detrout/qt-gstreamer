@@ -115,7 +115,7 @@ const QGlib::Value ValueArray::operator[](int i) const
     return at(i);
 }
 
-void ValueArray::set(int i, QGlib::Value &source)
+void ValueArray::replace(int i, QGlib::Value &source)
 {
     Q_ASSERT_X(garray, "ValueArray::set", "Called with uninitialized array");
 

@@ -57,12 +57,12 @@ public:
     void push_front(const Value &value);
 
     int removeAt(int i);
+    void replace(int, Value &);
 
     int size() const;
     // Value operator [](int);
     const Value operator[](int i) const;
 
-    void set(int, Value &);
 
     QList< Value > toList() const;
     QVector< Value > toVector() const;

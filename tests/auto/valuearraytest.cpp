@@ -89,7 +89,7 @@ void ValueArrayTest::arrayTest()
     QGlib::Value replacement;
     replacement.init<double>();
     replacement.set<double>(30.03);
-    qa.set(0, replacement);
+    qa.replace(0, replacement);
     QCOMPARE(qa[0].get<double>(), 30.03);
 
     // make sure they're the same in both views of the array
