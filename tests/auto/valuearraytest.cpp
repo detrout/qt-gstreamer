@@ -15,6 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#define GLIB_DISABLE_DEPRECATION_WARNINGS
+
 #include "qgsttest.h"
 #include <QGlib/ValueArray>
 #include <QGst/Bin>
@@ -28,6 +30,10 @@ class ValueArrayTest : public QGstTest
 private Q_SLOTS:
     void arrayTest();
     void toListTest();
+    void iteratorTest();
+    void swapTest();
+    void emptyTest();
+    void indelTest();
 };
 
 QGlib::GetTypeImpl< QGlib::ValueArray >::operator Type() { return G_TYPE_VALUE_ARRAY; }
@@ -124,6 +130,84 @@ void ValueArrayTest::toListTest()
     }
 }
 
+void ValueArrayTest::iteratorTest()
+{
+    QVector<QGlib::Value> vector1({1,2,3,4,5});
+    QGlib::ValueArray array1(vector1);
+
+    QVector<QGlib::Value>::const_iterator vi = vector1.begin();
+    QGlib::ValueArray::const_iterator ai = array1.begin();
+
+    //test const_iterator::operator[](int)
+    QCOMPARE(ai[4].toInt(), 5);
+    // test const_iterator::operator*
+    const QGlib::Value temp(*ai);
+    QCOMPARE(temp.toInt(), 1);
+
+    for(; vi != vector1.end(); ++vi, ++ai) {
+        // test const_iterator::operator->
+        QCOMPARE(vi->toInt(), ai->toInt());
+    }
+}
+
+void ValueArrayTest::swapTest()
+{
+    QVector<QGlib::Value> vector1({1,2,3,4,5});
+    QGlib::ValueArray array1(vector1);
+
+    int last = array1.size() - 1 ;
+    array1.swap(0, last);
+    QCOMPARE(array1[0].toInt(), 5);
+    QCOMPARE(array1.back().toInt(), 1);
+}
+
+void ValueArrayTest::emptyTest()
+{
+    QGlib::ValueArray array1;
+    QCOMPARE(array1.isEmpty(), true);
+    QCOMPARE(array1.empty(), true);
+    QCOMPARE(array1.size(), 0);
+
+    QVector<QGlib::Value> vector2({1,2,3,4,5});
+    QGlib::ValueArray array2(vector2);
+    QCOMPARE(array2.empty(), false);
+
+    array2.clear();
+    QCOMPARE(array2.isEmpty(), true);
+}
+
+void ValueArrayTest::indelTest()
+{
+    QVector<QGlib::Value> vector({1,2,3,4,5});
+    QGlib::ValueArray array(vector);
+
+    QCOMPARE(array.size(), 5);
+    QCOMPARE(array.first().toInt(), 1);
+
+    QGlib::Value zero(0);
+    array.insert(0, 0);
+
+    QCOMPARE(array.size(), 6);
+    QCOMPARE(array.first().toInt(), 0);
+
+    QGlib::Value minusone(-1);
+    array.push_front(minusone);
+
+    QCOMPARE(array.size(), 7);
+    QCOMPARE(array.first().toInt(), -1);
+
+    QGlib::Value six(6);
+    array.push_back(six);
+
+    QCOMPARE(array.size(), 8);
+    QCOMPARE(array.last().toInt(), 6);
+
+    QCOMPARE(array.takeFirst().toInt(), -1);
+    QCOMPARE(array.size(), 7);
+
+    QCOMPARE(array.takeLast().toInt(), 6);
+    QCOMPARE(array.size(), 6);
+}
 QTEST_APPLESS_MAIN(ValueArrayTest)
 
 #include "moc_qgsttest.cpp"
