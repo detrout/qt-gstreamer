@@ -38,21 +38,6 @@ private Q_SLOTS:
 
 QGlib::GetTypeImpl< QGlib::ValueArray >::operator Type() { return G_TYPE_VALUE_ARRAY; }
 
-struct ValueVTable_ValueArray
-{
-    //reads value and puts it in data
-    static void get(const QGlib::Value & value, void *data)
-    {
-        GValueArray *array = static_cast<GValueArray *>(g_value_get_boxed(value));
-        *reinterpret_cast<QGlib::ValueArray *>(data) = array;
-    }
-
-    // set applies data to value
-    static void set(QGlib::Value & value, const void *data)
-    {
-        g_value_set_boxed(value, reinterpret_cast<const QGlib::ValueArray *>(data));
-    };
-};
 
 // Create a GValueArray fill it with a few values
 // And try to figure out how to extract data from it.
@@ -81,13 +66,9 @@ void ValueArrayTest::arrayTest()
 
     QGlib::Value qv1(g_value_array_get_nth(unboxed_array, 1));
     QCOMPARE(qv1.get<double>(), 20.02);
-    //QVERIFY(G_VALUE_HOLDS(gv, G_TYPE_VALUE_ARRAY));
 
     QGlib::ValueArray a1(qvarray);
     QCOMPARE(a1[0].get<double>(), 10.01);
-
-    QGlib::Value::registerValueVTable(QGlib::GetType<QGlib::ValueArray>(),
-            QGlib::ValueVTable(ValueVTable_ValueArray::set, ValueVTable_ValueArray::get));
 
     QGlib::ValueArray qa(qvarray.get<QGlib::ValueArray>());
     QCOMPARE(qa[1].get<double>(), 20.02);
