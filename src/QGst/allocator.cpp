@@ -5,72 +5,72 @@
 
 namespace QGst {
 
-struct AllocatorParamsPrivate : GstAllocationParams
+struct AllocationParamsPrivate : GstAllocationParams
 {
 };
 
-AllocatorParams::AllocatorParams()
-  : d_ptr(new AllocatorParamsPrivate)
+AllocationParams::AllocationParams()
+  : d_ptr(new AllocationParamsPrivate)
 {
-    Q_D(AllocatorParams);
+    Q_D(AllocationParams);
     gst_allocation_params_init(d);
 }
 
-AllocatorParams::AllocatorParams(AllocatorParams &other)
-  : d_ptr(static_cast<AllocatorParamsPrivate *>(gst_allocation_params_copy(other.d_ptr)))
+AllocationParams::AllocationParams(AllocationParams &other)
+  : d_ptr(static_cast<AllocationParamsPrivate *>(gst_allocation_params_copy(other.d_ptr)))
 {
 }
 
-AllocatorParams::~AllocatorParams()
+AllocationParams::~AllocationParams()
 {
     gst_allocation_params_free(d_ptr);
 }
 
-MemoryFlags AllocatorParams::flags() const
+MemoryFlags AllocationParams::flags() const
 {
-    Q_D(const AllocatorParams);
+    Q_D(const AllocationParams);
     return static_cast<QGst::MemoryFlags>(static_cast<unsigned int>(d->flags));
 }
 
-void AllocatorParams::setFlags(MemoryFlags flags)
+void AllocationParams::setFlags(MemoryFlags flags)
 {
-    Q_D(AllocatorParams);
+    Q_D(AllocationParams);
     d->flags = static_cast<GstMemoryFlags>(static_cast<unsigned int>(flags));
 }
 
-size_t AllocatorParams::align() const
+size_t AllocationParams::align() const
 {
-    Q_D(const AllocatorParams);
+    Q_D(const AllocationParams);
     return d->align;
 }
 
-void AllocatorParams::setAlign(size_t align)
+void AllocationParams::setAlign(size_t align)
 {
-    Q_D(AllocatorParams);
+    Q_D(AllocationParams);
     d->align = align;
 }
 
-size_t AllocatorParams::prefix() const
+size_t AllocationParams::prefix() const
 {
-    Q_D(const AllocatorParams);
+    Q_D(const AllocationParams);
     return d->prefix;
 }
 
-void AllocatorParams::setPrefix(size_t align)
+void AllocationParams::setPrefix(size_t align)
 {
-    Q_D(AllocatorParams);
+    Q_D(AllocationParams);
     d->prefix = align;
 }
 
-size_t AllocatorParams::padding() const
+size_t AllocationParams::padding() const
 {
-    Q_D(const AllocatorParams);
+    Q_D(const AllocationParams);
     return d->padding;
 }
 
-void AllocatorParams::setPadding(size_t padding)
+void AllocationParams::setPadding(size_t padding)
 {
-    Q_D(AllocatorParams);
+    Q_D(AllocationParams);
     d->padding = padding;
 }
 
@@ -148,7 +148,7 @@ void Allocator::setDefault()
     gst_allocator_set_default(d->g_alloc);
 }
 
-MemoryPtr Allocator::alloc(size_t size, AllocatorParams &params)
+MemoryPtr Allocator::alloc(size_t size, AllocationParams &params)
 {
     AllocatorPrivate *d = static_cast<AllocatorPrivate *>(m_object);
 

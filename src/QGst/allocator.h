@@ -26,13 +26,13 @@
 
 namespace QGst {
 
-class AllocatorParamsPrivate;
-class QTGSTREAMER_EXPORT AllocatorParams
+class AllocationParamsPrivate;
+class QTGSTREAMER_EXPORT AllocationParams
 {
 public:
-    AllocatorParams();
-    AllocatorParams(AllocatorParams &other);
-    ~AllocatorParams();
+    AllocationParams();
+    AllocationParams(AllocationParams &other);
+    ~AllocationParams();
 
     MemoryFlags flags() const;
     void setFlags(MemoryFlags flags);
@@ -44,10 +44,10 @@ public:
     void setPadding(size_t padding);
 
 protected:
-    AllocatorParamsPrivate * const d_ptr;
+    AllocationParamsPrivate * const d_ptr;
 
 private:
-    Q_DECLARE_PRIVATE(AllocatorParams)
+    Q_DECLARE_PRIVATE(AllocationParams)
     friend Allocator;
 };
 
@@ -75,7 +75,7 @@ public:
     void setDefault();
 
     // using this allocator create a chunk of memory
-    MemoryPtr alloc(size_t size, AllocatorParams &params);
+    MemoryPtr alloc(size_t size, AllocationParams &params);
     // release memory allocated with alloc
     void free(MemoryPtr memory);
 //    MemoryPtr newWrapped(MemoryFlags flags, void *data, size_t maxsize, size_t offset, size_t size, void *user_data, GDestroyNotify);
