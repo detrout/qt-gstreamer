@@ -53,7 +53,7 @@ class QTGSTREAMER_EXPORT Memory : public MiniObject
     QGST_WRAPPER(Memory)
 public:
     static MemoryPtr create(size_t size);
-    static MemoryPtr create(MemoryFlags flags, void *allocator, MemoryPtr parent,
+    static MemoryPtr create(MemoryFlags flags, AllocatorPtr allocator, MemoryPtr parent,
                             size_t maxsize, size_t align, size_t offset, size_t size);
 
     size_t getSizes(size_t &offset, size_t &maxsize);
