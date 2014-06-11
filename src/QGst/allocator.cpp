@@ -74,61 +74,21 @@ void AllocationParams::setPadding(size_t padding)
     d->padding = padding;
 }
 
-struct AllocatorPrivate
+Allocator::Allocator(GstAllocator *g_alloc)
 {
-     GstAllocator *g_alloc;
-     int refcount;
-
-     AllocatorPrivate() :
-       g_alloc(new GstAllocator),
-       refcount(0) {}
-
-     AllocatorPrivate(GstAllocator *a) :
-       g_alloc(a), refcount(1) {}
-
-     ~AllocatorPrivate()
-     {
-         if (refcount == 0 && g_alloc) {
-             delete g_alloc;
-             g_alloc = 0;
-         }
-     }
-};
-
-Allocator::Allocator()
-{
-    m_object = static_cast<void *>(new AllocatorPrivate);
+    m_object = static_cast<void *>(g_alloc);
 }
 
-Allocator::Allocator(GstAllocator *alloc)
+Allocator::operator GstAllocator *()
 {
-    m_object = static_cast<void *>(new AllocatorPrivate(alloc));
+    return static_cast<GstAllocator *>(m_object);
 }
 
-Allocator::~Allocator()
+Allocator::operator GstAllocator *() const
 {
-    delete static_cast<AllocatorPrivate *>(m_object);
+    return static_cast<GstAllocator *>(m_object);
 }
 
-GstAllocator* Allocator::object() const
-{
-    AllocatorPrivate *d = static_cast<AllocatorPrivate *>(m_object);
-    return static_cast<GstAllocator* const>(d->g_alloc);
-}
-
-void Allocator::ref(bool increaseRef)
-{
-    if (increaseRef) {
-        AllocatorPrivate *d = static_cast<AllocatorPrivate *>(m_object);
-        ++(d->refcount);
-    }
-}
-
-void Allocator::unref()
-{
-    AllocatorPrivate *d = static_cast<AllocatorPrivate *>(m_object);
-    --(d->refcount);
-}
 
 AllocatorPtr Allocator::find(const char *name)
 {
@@ -137,29 +97,22 @@ AllocatorPtr Allocator::find(const char *name)
 
 void Allocator::registerAllocator(const char *name)
 {
-    AllocatorPrivate *d = static_cast<AllocatorPrivate *>(m_object);
-    gst_allocator_register(name, d->g_alloc);
+    gst_allocator_register(name, object<GstAllocator>());
 }
 
 void Allocator::setDefault()
 {
-    AllocatorPrivate *d = static_cast<AllocatorPrivate *>(m_object);
-
-    gst_allocator_set_default(d->g_alloc);
+    gst_allocator_set_default(object<GstAllocator>());
 }
 
 MemoryPtr Allocator::alloc(size_t size, AllocationParams &params)
 {
-    AllocatorPrivate *d = static_cast<AllocatorPrivate *>(m_object);
-
-    return MemoryPtr::wrap(gst_allocator_alloc(d->g_alloc, size, params.d_ptr));
+    return MemoryPtr::wrap(gst_allocator_alloc(object<GstAllocator>(), size, params.d_ptr));
 }
 
 void Allocator::free(MemoryPtr memory)
 {
-    AllocatorPrivate *d = static_cast<AllocatorPrivate *>(m_object);
-
-    gst_allocator_free(d->g_alloc, memory);
+    gst_allocator_free(object<GstAllocator>(), memory);
 }
 
 } /* QGst */

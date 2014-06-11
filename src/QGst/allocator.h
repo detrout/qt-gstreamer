@@ -52,20 +52,14 @@ private:
 };
 
 
-class QTGSTREAMER_EXPORT Allocator : public QGlib::RefCountedObject
+class QTGSTREAMER_EXPORT Allocator : public Object
 {
+    QGST_WRAPPER(Allocator)
 public:
-    typedef GstAllocator CType;
-protected:
-    friend QGlib::RefCountedObject* Allocator_new(void *);
-public:
-    Allocator();
-    Allocator(const Allocator &);
-    Allocator &operator=(const Allocator &);
-    Allocator(GstAllocator *g_alloc);
-    ~Allocator();
+    explicit Allocator(GstAllocator *g_alloc);
 
-    GstAllocator* object() const;
+    operator GstAllocator *();
+    operator GstAllocator *() const;
 
     // search for an already registered allocator.
     static AllocatorPtr find(const char *name);
@@ -80,12 +74,10 @@ public:
     void free(MemoryPtr memory);
 //    MemoryPtr newWrapped(MemoryFlags flags, void *data, size_t maxsize, size_t offset, size_t size, void *user_data, GDestroyNotify);
 
-
-private:
-    void ref(bool increaseRef);
-    void unref();
+    friend Memory;
 };
 
 } /* QGst */
 
+QGST_REGISTER_TYPE(QGst::Allocator)
 #endif /* QGST_ALLOCATOR_H */

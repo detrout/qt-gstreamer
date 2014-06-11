@@ -69,7 +69,7 @@ MemoryPtr Memory::create(MemoryFlags flags, AllocatorPtr allocator, MemoryPtr pa
     MemoryPtr mem;
 
     gst_memory_init(mem, static_cast<GstMemoryFlags>(static_cast<int>(flags)),
-                    allocator->object(), parent, maxsize, align, offset, size);
+                    allocator->object<GstAllocator>(), parent, maxsize, align, offset, size);
     return mem;
 }
 

@@ -25,13 +25,13 @@ class AllocatorTest : public QGstTest
     Q_OBJECT
 private Q_SLOTS:
 
-    void testAllocatorParams();
+    void testAllocationParams();
     void testAllocator();
 };
 
-void AllocatorTest::testAllocatorParams()
+void AllocatorTest::testAllocationParams()
 {
-    QGst::AllocatorParams *p(new QGst::AllocatorParams);
+    QGst::AllocationParams *p(new QGst::AllocationParams);
 
     // its really pathetic but sometimes getters and
     // setters break
@@ -46,7 +46,7 @@ void AllocatorTest::testAllocatorParams()
     QCOMPARE(p->padding(), 30ul);
 
     // Does copy work?
-    QGst::AllocatorParams c(*p);
+    QGst::AllocationParams c(*p);
 
     QCOMPARE(c.flags(), QGst::MemoryFlagReadonly | QGst::MemoryFlagNotMappable);
     QCOMPARE(c.align(), 10ul);
@@ -64,14 +64,12 @@ void AllocatorTest::testAllocatorParams()
 
 void AllocatorTest::testAllocator()
 {
-    QGst::Allocator alloc;
-
     GstAllocator *g_system = gst_allocator_find("SystemMemory");
     QGst::AllocatorPtr system(QGst::Allocator::find("SystemMemory"));
     QVERIFY(system);
-    QCOMPARE(g_system, system->object());
+    QCOMPARE(g_system, static_cast<GstAllocator *>(system));
 
-    QGst::AllocatorParams params;
+    QGst::AllocationParams params;
     params.setFlags(QGst::MemoryFlagNotMappable);
 
     QGst::MemoryPtr mem = system->alloc(100, params);
