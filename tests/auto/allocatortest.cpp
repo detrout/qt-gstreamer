@@ -41,25 +41,25 @@ void AllocatorTest::testAllocationParams()
     p->setPadding(30ul);
 
     QCOMPARE(p->flags(), QGst::MemoryFlagReadonly | QGst::MemoryFlagNotMappable);
-    QCOMPARE(p->align(), 10ul);
-    QCOMPARE(p->prefix(), 20ul);
-    QCOMPARE(p->padding(), 30ul);
+    QCOMPARE(p->align(), static_cast<size_t>(10));
+    QCOMPARE(p->prefix(), static_cast<size_t>(20));
+    QCOMPARE(p->padding(), static_cast<size_t>(30));
 
     // Does copy work?
     QGst::AllocationParams c(*p);
 
     QCOMPARE(c.flags(), QGst::MemoryFlagReadonly | QGst::MemoryFlagNotMappable);
-    QCOMPARE(c.align(), 10ul);
-    QCOMPARE(c.prefix(), 20ul);
-    QCOMPARE(c.padding(), 30ul);
+    QCOMPARE(c.align(), static_cast<size_t>(10));
+    QCOMPARE(c.prefix(), static_cast<size_t>(20));
+    QCOMPARE(c.padding(), static_cast<size_t>(30));
 
     // Does copy really work. (delete the source)
     delete p;
 
     QCOMPARE(c.flags(), QGst::MemoryFlagReadonly | QGst::MemoryFlagNotMappable);
-    QCOMPARE(c.align(), 10ul);
-    QCOMPARE(c.prefix(), 20ul);
-    QCOMPARE(c.padding(), 30ul);
+    QCOMPARE(c.align(), static_cast<size_t>(10));
+    QCOMPARE(c.prefix(), static_cast<size_t>(20));
+    QCOMPARE(c.padding(), static_cast<size_t>(30));
 }
 
 void AllocatorTest::testAllocator()
