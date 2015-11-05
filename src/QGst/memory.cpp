@@ -15,7 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "allocator.h"
-#include "memory.h"
+#include "QGst/memory.h"
 #include "buffer.h"
 #include <gst/gst.h>
 
