@@ -27,9 +27,10 @@ namespace QGst {
     /*! \headerfile buffer.h <QGst/Buffer>
      * \brief Wrapper class for GstBuffer
      *
-     * Buffers are the basic unit of data transfer in GStreamer. The data() pointer holds the
-     * contents of the buffer, and the length is obtained from size(). Buffers also contain a
-     * CapsPtr in caps() that indicates the format of the buffer data.
+     * Buffers are the basic unit of data transfer in GStreamer. The data in the 
+     * buffer can be modified and accessed with the map() and unmap() functions,
+     * and the length is obtained from size(). Buffers also contain a CapsPtr in 
+     * caps() that indicates the format of the buffer data.
      *
      */
 class QTGSTREAMER_EXPORT Buffer : public MiniObject
